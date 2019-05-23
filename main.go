@@ -20,22 +20,22 @@ import (
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host petstore.swagger.io
-// @BasePath /v2
+// @host example.swagger.io
+// @BasePath /
 func main() {
 	r := gin.Default()
 
+	r.StaticFile("/static/swagger.json", "docs/swagger.json")
 	config := &ginSwagger.Config{
-		URL: "http://localhost:8080/swagger/doc.json", //The url pointing to API definition
+		URL: "http://localhost:8080/static/swagger.json", //The url pointing to API definition
 	}
-
 	// use ginSwagger middleware to
 	r.GET("/swagger/*any", ginSwagger.CustomWrapHandler(config, swaggerFiles.Handler))
 
-	r.GET("/ping", func(c *gin.Context) {
+	/* r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "pong",
 		})
-	})
+	}) */
 	r.Run() // listen and serve on 0.0.0.0:8080
 }
