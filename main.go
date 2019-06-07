@@ -38,7 +38,7 @@ func main() {
 	db := gormConnect()
 
 	defer db.Close()
-	
+
 	db.LogMode(true)
 	db.Set("gorm:table_options", "ENGINE=InnoDB")
 	db.AutoMigrate(&User{})
@@ -47,6 +47,24 @@ func main() {
 
 	r.GET("/hello", func(c *gin.Context) {
 		c.String(http.StatusOK, "Hello world")
+	})
+
+	//CREATE
+	r.POST("/user", func(c *gin.Context) {
+		user := User{}
+		now := time.Now()
+		user.CreatedAt = now
+		user.UpdatedAt = now
+
+		err := c.BindJSON(&user)
+		if err != nil {
+			c.String(http.StatusBadRequest, "Request is failed: "+err.Error())
+		}
+		db.NewRecord(user)
+		db.Create(&user)
+		if db.NewRecord(user) == false {
+			c.JSON(http.StatusOK, user)
+		}
 	})
 
 	r.Run(":8080")
